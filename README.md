@@ -7,6 +7,13 @@ The four chapters cover everyday commands, Mac authentication, verified folder
 sync, and recovery. Each has an overview illustration or walkthrough and an inline
 Go deeper article grounded in the Key implementation.
 
+## Production hosting
+
+The repository is maintained at [tvr-works/key-site](https://github.com/tvr-works/key-site).
+Cloudflare Pages serves `key.tvr.works` from this repository’s `main` branch.
+The existing `key-site` Pages project runs `npm run build` and publishes `dist/`.
+Its GitHub integration must have access to the organization repository.
+
 ## Local development
 
 Use Node.js 24.15+ LTS and npm. Node.js 22.22.2+ is also supported by the
