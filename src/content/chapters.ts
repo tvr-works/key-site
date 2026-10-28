@@ -38,8 +38,8 @@ export const chapters = [
 
 export type Chapter = (typeof chapters)[number]
 
-export const projectUrl = "https://github.com/tvanreenen/key"
+export const projectUrl = "https://github.com/tvr-works/key"
 export const installCommand =
-  "brew tap tvanreenen/tap && brew install --cask key"
+  "brew tap tvr-works/tap && brew install --cask tvr-works/tap/key"
 
 export const setupUrl = `${projectUrl}#install-and-choose-a-release-channel`

@@ -50,7 +50,7 @@ export const chapterDetails: Record<Chapter["id"], ChapterDetail> = {
       },
       {
         label: "Authentication and sessions",
-        href: `${projectUrl}#how-access-works`,
+        href: `${projectUrl}#security-beneath-the-cli`,
       },
     ],
   },
@@ -93,7 +93,7 @@ export const chapterDetails: Record<Chapter["id"], ChapterDetail> = {
     references: [
       {
         label: "Access and migration guidance",
-        href: `${projectUrl}#how-access-works`,
+        href: `${projectUrl}#security-beneath-the-cli`,
       },
       {
         label: "Apple’s authentication policy",

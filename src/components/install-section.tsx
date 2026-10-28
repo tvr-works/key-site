@@ -26,7 +26,7 @@ export function InstallSection() {
       aria-labelledby="install-title"
     >
       <div>
-        <p className="eyebrow text-muted-foreground">macOS 14+</p>
+        <p className="eyebrow text-muted-foreground">macOS 26+</p>
         <h2 id="install-title" className="install-title">
           Install key.
         </h2>
