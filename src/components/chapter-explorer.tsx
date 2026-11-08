@@ -90,14 +90,14 @@ export function ChapterExplorer() {
               key={chapter.id}
               value={chapter.id}
               className="chapter-panel"
+              keepMounted
             >
-              {current.id === chapter.id && (
-                <ChapterReader
-                  chapter={chapter}
-                  compact={compact}
-                  onRead={pause}
-                />
-              )}
+              <ChapterReader
+                chapter={chapter}
+                active={current.id === chapter.id}
+                compact={compact}
+                onRead={pause}
+              />
             </TabsContent>
           ))}
         </div>

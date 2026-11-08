@@ -12,10 +12,12 @@ import type { Chapter } from "@/content/chapters"
 
 export function ChapterReader({
   chapter,
+  active,
   compact,
   onRead,
 }: {
   chapter: Chapter
+  active: boolean
   compact: boolean
   onRead: () => void
 }) {
@@ -26,10 +28,15 @@ export function ChapterReader({
   const articleHeading = useRef<HTMLHeadingElement>(null)
   const reducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)")
 
+  // Retained panels start at their overview whenever they become active.
+  useEffect(() => {
+    if (active && viewport.current) viewport.current.scrollTop = 0
+  }, [active])
+
   // On mobile the document owns scrolling. Pause when the article enters view,
   // including readers who reach it without using the jump control.
   useEffect(() => {
-    if (!compact) return
+    if (!active || !compact) return
     const checkReading = () => {
       const bounds = article.current?.getBoundingClientRect()
       if (bounds && bounds.top < window.innerHeight * 0.65 && bounds.bottom > 0)
@@ -38,7 +45,7 @@ export function ChapterReader({
     checkReading()
     window.addEventListener("scroll", checkReading, { passive: true })
     return () => window.removeEventListener("scroll", checkReading)
-  }, [compact, onRead])
+  }, [active, compact, onRead])
 
   function jump(toArticle: boolean) {
     onRead()
@@ -60,6 +67,7 @@ export function ChapterReader({
           viewport.current.getBoundingClientRect().top,
         behavior,
       })
+      viewport.current.scrollIntoView({ block: "start", behavior })
     }
   }
 
@@ -77,15 +85,16 @@ export function ChapterReader({
             {chapter.description}
           </p>
         </div>
-        {chapter.id === "use" ? (
-          <UseDemo onInteract={onRead} />
-        ) : chapter.id === "authenticate" ? (
-          <AuthenticateDemo />
-        ) : chapter.id === "sync" ? (
-          <SyncDemo />
-        ) : (
-          <RecoverDemo />
-        )}
+        {active &&
+          (chapter.id === "use" ? (
+            <UseDemo onInteract={onRead} />
+          ) : chapter.id === "authenticate" ? (
+            <AuthenticateDemo />
+          ) : chapter.id === "sync" ? (
+            <SyncDemo />
+          ) : (
+            <RecoverDemo />
+          ))}
         <div className="chapter-footer">
           <Button
             variant="ghost"
@@ -141,7 +150,7 @@ export function ChapterReader({
         "aria-label": `${chapter.label} overview and explanation`,
         role: "region",
         onScroll: (event) => {
-          if (event.currentTarget.scrollTop > 0) onRead()
+          if (active && event.currentTarget.scrollTop > 0) onRead()
         },
       }}
     >

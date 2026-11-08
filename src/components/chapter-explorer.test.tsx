@@ -9,11 +9,13 @@ import {
 } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import axe from "axe-core"
+import { renderToString } from "react-dom/server"
 import App from "@/App"
 import { ChapterExplorer } from "./chapter-explorer"
 import { InstallSection } from "./install-section"
 import { commandWalkthrough } from "@/content/command-walkthrough"
 import { chapters, installCommand } from "@/content/chapters"
+import { chapterDetails } from "@/content/chapter-details"
 import { installBrowserEnvironment } from "@/test/browser-environment"
 
 afterEach(() => {
@@ -23,6 +25,41 @@ afterEach(() => {
 })
 
 describe("chapter interactions", () => {
+  it("includes every chapter's overview and article in the initial HTML", () => {
+    const page = new DOMParser().parseFromString(
+      renderToString(<App />),
+      "text/html"
+    )
+    for (const chapter of chapters) {
+      const article = page.getElementById(`details-${chapter.id}`)
+      expect(article?.textContent).toContain(chapter.detail)
+      expect(article?.textContent).toContain(chapterDetails[chapter.id].intro)
+      expect(page.body.textContent).toContain(chapter.description)
+    }
+    expect(page.querySelectorAll('[role="tabpanel"]')).toHaveLength(4)
+    expect(
+      page.querySelectorAll('[role="tabpanel"]:not([hidden])')
+    ).toHaveLength(1)
+  })
+
+  it("retains every article while exposing only the selected chapter", async () => {
+    installBrowserEnvironment({ reducedMotion: true })
+    const user = userEvent.setup()
+    render(<ChapterExplorer />)
+    for (const chapter of chapters) {
+      await user.click(
+        screen.getByRole("tab", {
+          name: new RegExp(`${chapter.number}\\s*${chapter.label}`),
+        })
+      )
+      expect(screen.getAllByRole("article", { hidden: true })).toHaveLength(4)
+      await waitFor(() =>
+        expect(screen.getAllByRole("article")).toHaveLength(1)
+      )
+      expect(screen.getByRole("article", { name: chapter.detail })).toBeTruthy()
+    }
+  })
+
   it.each([
     { compact: false, orientation: "vertical", key: "{ArrowDown}" },
     { compact: true, orientation: "horizontal", key: "{ArrowRight}" },
