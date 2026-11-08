@@ -160,10 +160,10 @@ describe("chapter interactions", () => {
     // Color/geometry checks require a rendering browser, reviewed separately.
     const options = { rules: { "color-contrast": { enabled: false } } }
     expect((await axe.run(container, options)).violations).toEqual([])
-    for (const { label } of commandWalkthrough) {
+    for (const [index, { label }] of commandWalkthrough.entries()) {
       await user.click(
         screen.getByRole("button", {
-          name: `Show ${label.toLowerCase()} example`,
+          name: `0${index + 1} ${label}`,
         })
       )
       expect(screen.getByRole("button", { name: "Play chapters" })).toBeTruthy()
