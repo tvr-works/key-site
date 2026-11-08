@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#101011" />
+    <title>Page not found — key</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        background: #101011;
+        color: #f5f5f4;
+        font-family: system-ui, sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100svh;
+        margin: 0;
+        padding: clamp(24px, 5vw, 88px);
+      }
+      a {
+        color: inherit;
+        text-underline-offset: 5px;
+      }
+      a:focus-visible {
+        outline: 2px solid #d4d4d8;
+        outline-offset: 6px;
+      }
+      header a {
+        font-size: 36px;
+        font-weight: 750;
+        letter-spacing: -0.07em;
+        text-decoration: none;
+      }
+      main {
+        max-width: 40rem;
+        margin-block: auto;
+        padding-block: 80px;
+      }
+      .eyebrow {
+        color: #a5a5a8;
+        font-size: 12px;
+        letter-spacing: 0.15em;
+      }
+      h1 {
+        margin: 24px 0;
+        font-size: clamp(44px, 8vw, 80px);
+        font-weight: 680;
+        letter-spacing: -0.055em;
+        line-height: 1.05;
+      }
+      main p:not(.eyebrow) {
+        color: #b9b9bc;
+        font-size: 18px;
+        line-height: 1.6;
+      }
+      main a {
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+        margin-top: 16px;
+        font-size: 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <header><a href="/" aria-label="key home">key</a></header>
+    <main>
+      <p class="eyebrow">404</p>
+      <h1>Page not found.</h1>
+      <p>The page you’re looking for doesn’t exist or has moved.</p>
+      <a href="/">Back to key</a>
+    </main>
+  </body>
+</html>

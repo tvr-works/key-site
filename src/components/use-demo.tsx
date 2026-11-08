@@ -40,13 +40,12 @@ export function UseDemo({ onInteract }: { onInteract: () => void }) {
             className="demo-step"
             aria-pressed={index === stepIndex}
             aria-controls="command-example"
-            aria-label={`Show ${item.label.toLowerCase()} example`}
             onClick={() => {
               setIndex(stepIndex)
               onInteract()
             }}
           >
-            <span className="demo-step-number">0{stepIndex + 1}</span>
+            <span className="demo-step-number">0{stepIndex + 1}</span>{" "}
             {item.label}
           </Button>
         ))}

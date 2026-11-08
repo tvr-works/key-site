@@ -10,7 +10,8 @@ for (const width of [768, 1024, 1536]) {
     .webp({ quality: 85 })
     .toFile(`public/assets/touch-id-${width}.webp`)
 }
-await sharp("assets/source/touch-id.png")
+// Keep the social typography in its own composed source, independent of the hero.
+await sharp("assets/source/og-card.png")
   .resize(1200, 630, { fit: "cover", position: "centre" })
   .jpeg({ quality: 88, mozjpeg: true })
-  .toFile("public/assets/og.jpg")
+  .toFile("public/assets/og-card.jpg")

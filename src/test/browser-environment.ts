@@ -19,6 +19,13 @@ export function installBrowserEnvironment({
       writable: true,
     })
   }
+  if (!HTMLElement.prototype.scrollIntoView) {
+    Object.defineProperty(HTMLElement.prototype, "scrollIntoView", {
+      configurable: true,
+      value: () => {},
+      writable: true,
+    })
+  }
   vi.stubGlobal("matchMedia", (query: string) => ({
     matches: query.includes("prefers-reduced-motion") ? reducedMotion : compact,
     media: query,

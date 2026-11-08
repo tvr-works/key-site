@@ -2,8 +2,9 @@
 
 Created using the built-in ImageGen tool on 2026-09-06 from the approved
 Soft focus concept. The original generated photo is `assets/source/touch-id.png`.
-Responsive WebP encodings and the social-card JPEG are reproducible with
-`npm run images`. Website typography and controls are real HTML.
+Responsive WebP encodings are reproducible with `npm run images`.
+The branded social card has a separate source and brief in `docs/og-card.md`.
+Website typography and controls are real HTML.
 
 ## Generation prompt
 

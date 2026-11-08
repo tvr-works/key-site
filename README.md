@@ -36,6 +36,15 @@ HTML at build time, then hydrates its controls in the browser. No application
 server is needed for hosting. The normal development server uses client rendering.
 Canonical and social URLs in `index.html` continue to target `key.tvr.works`.
 
+All four chapter overviews and articles are included in the initial HTML.
+Inactive tab panels remain hidden and inert, and only the selected chapter
+mounts its demo. Selecting a chapter resets its reading pane to the overview.
+
+`public/404.html` is copied to the build root. Cloudflare Pages uses it for
+missing URLs, returning HTTP 404 instead of falling back to the homepage.
+Vite's development and preview servers use their own routing behavior; verify
+the HTTP status on Cloudflare Pages after deployment.
+
 ## Editing the page
 
 | Change                                                        | Location                                                                  |
@@ -57,7 +66,9 @@ review product claims against the actual key release before publishing.
 
 The approved photographic source is `assets/source/touch-id.png`. Run
 `npm run images` to regenerate responsive WebP variants and the social image.
-The generation brief is in `docs/hero-asset.md`. Earlier assets remain under
+The social card uses its own source, `assets/source/og-card.png`, so regeneration
+preserves its wordmark and headline. Its brief is in `docs/og-card.md`;
+the photographic hero brief is in `docs/hero-asset.md`. Earlier assets remain under
 `assets/` as design references; only `public/` is copied to the built site.
 
 Command examples and their explanations live in `src/content/command-walkthrough.ts`.
