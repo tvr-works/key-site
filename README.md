@@ -57,7 +57,9 @@ review product claims against the actual key release before publishing.
 
 The approved photographic source is `assets/source/touch-id.png`. Run
 `npm run images` to regenerate responsive WebP variants and the social image.
-The generation brief is in `docs/hero-asset.md`. Earlier assets remain under
+The social card uses its own source, `assets/source/og-card.png`, so regeneration
+preserves its wordmark and headline. Its brief is in `docs/og-card.md`;
+the photographic hero brief is in `docs/hero-asset.md`. Earlier assets remain under
 `assets/` as design references; only `public/` is copied to the built site.
 
 Command examples and their explanations live in `src/content/command-walkthrough.ts`.
