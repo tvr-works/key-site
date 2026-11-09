@@ -1,0 +1,70 @@
+name: Site checks
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: site-checks-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble@sha256:2f05f8a734509a7b3f26a912639488ee08f58a7b292d14d62271bcff9038768f
+      options: --init --ipc=host
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - name: Pin npm and check browser image compatibility
+        run: |
+          npm_version=$(node -p "JSON.parse(require('fs').readFileSync('package.json', 'utf8')).packageManager.split('@')[1]")
+          if [ "$(npm --version)" != "$npm_version" ]; then
+            npm install --global "npm@$npm_version" --ignore-scripts --no-fund
+          fi
+          npm run check:runtime
+          node --input-type=module -e 'import fs from "node:fs"; import assert from "node:assert/strict"; const p = JSON.parse(fs.readFileSync("package.json", "utf8")); assert.equal(p.devDependencies["@playwright/test"], "1.64.1", "Update the Playwright image, digest, and package pin together.");'
+      - run: npm ci
+      - run: npm audit --audit-level=high
+      - run: npm run check
+      - name: Verify preview delivery and browser interactions
+        run: npm run test:browser
+        env:
+          SITE_DEPLOYMENT_MODE: preview
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report/preview
+      - name: Verify public artifact
+        run: npm run test:artifact
+        env:
+          SITE_DEPLOYMENT_MODE: production
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report/production
+      - name: Save validated static artifact
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: site-${{ github.sha }}-${{ github.run_attempt }}
+          path: dist/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 7
+      - name: Save browser failure evidence
+        if: failure() && !cancelled()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: browser-failure-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 7

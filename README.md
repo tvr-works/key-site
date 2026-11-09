@@ -16,8 +16,8 @@ Its GitHub integration must have access to the organization repository.
 
 ## Local development
 
-Use Node.js 24.15+ LTS and npm. Node.js 22.22.2+ is also supported by the
-installed build and test dependencies.
+Use the pinned Node.js 26.13.0 (`.node-version`) and npm 11.20.0 (`packageManager`).
+Build and CI check the runtime versions before validation.
 
 ```sh
 npm ci
@@ -111,3 +111,10 @@ startup, responsive keyboard navigation, inline reading focus and scroll navigat
 success/failure, and automated accessibility rules. DOM tests use jsdom; they do
 not prove rendered layout, color contrast, or assistive-technology behavior.
 See `docs/overhaul.md` for the browser review and remaining verification limits.
+
+Run `npm run check` for formatting, lint, types, and unit checks. Run
+`npm run test:browser` for the focused Chromium/WebKit suite, or
+`SITE_DEPLOYMENT_MODE=preview npm run test:browser` to exercise preview edge
+indexing. `npm run test:artifact` checks the public static artifact. See
+`docs/ci-deployment.md` for CI, the pending Cloudflare gate cutover, runtime
+pins, delivery/security policies, deployment identity checks, and recovery.

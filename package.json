@@ -5,13 +5,21 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && vite build --ssr src/entry-server.tsx --outDir .cache/prerender && node scripts/prerender.mjs",
+    "build": "npm run check:runtime && tsc -b && vite build && vite build --ssr src/entry-server.tsx --outDir .cache/prerender && node scripts/prerender.mjs && node scripts/finalize-static.mjs && npm run check:budget",
     "lint": "oxlint --deny-warnings",
-    "format": "prettier --write src scripts vite.config.ts",
+    "format": "prettier --write src scripts tests *.ts index.html public/404.html .github/workflows/ci.yml package.json build-budgets.json",
     "typecheck": "tsc -b",
-    "preview": "vite preview",
+    "preview": "vite preview --config vite.preview.config.ts",
     "test": "vitest run",
-    "images": "node scripts/prepare-images.mjs"
+    "images": "node scripts/prepare-images.mjs",
+    "check:runtime": "node scripts/check-runtime.mjs",
+    "ci:gate": "node scripts/wait-for-ci.ts",
+    "format:check": "prettier --check src scripts tests *.ts index.html public/404.html .github/workflows/ci.yml package.json build-budgets.json",
+    "check": "npm run check:runtime && npm run format:check && npm run lint && npm run typecheck && npm test",
+    "check:budget": "node scripts/check-build-budget.mjs",
+    "test:browser": "npm run build && playwright test",
+    "test:artifact": "npm run build && playwright test --grep @artifact",
+    "verify:deployment": "node scripts/verify-deployment.mjs"
   },
   "dependencies": {
     "@base-ui/react": "1.8.0",
@@ -22,11 +30,13 @@
     "lucide-react": "1.41.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "shadcn": "4.21.0",
+    "shadcn": "4.22.1",
     "tailwindcss": "4.3.3",
     "tw-animate-css": "1.4.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.64.1",
     "@testing-library/react": "16.3.3",
     "@testing-library/user-event": "14.6.7",
     "@types/node": "26.4.1",
@@ -36,11 +46,17 @@
     "axe-core": "4.13.0",
     "jsdom": "30.0.1",
     "oxlint": "1.81.0",
+    "playwright-core": "1.64.1",
     "prettier": "3.9.6",
     "prettier-plugin-tailwindcss": "0.8.1",
-    "sharp": "0.35.4",
+    "sharp": "0.35.5",
     "typescript": "7.0.2",
-    "vite": "8.2.2",
+    "vite": "8.2.4",
     "vitest": "5.0.0"
+  },
+  "packageManager": "npm@11.20.0",
+  "engines": {
+    "node": "26.13.x",
+    "npm": "11.20.x"
   }
 }
