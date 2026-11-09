@@ -20,9 +20,7 @@ it("keeps command references reader-controlled and pairs commands with explanati
   expect(screen.getByText(/current one-time code/)).toBeTruthy()
   rerender(<UseDemo onInteract={onInteract} />)
   expect(
-    screen
-      .getByRole("button", { name: "03 Get" })
-      .getAttribute("aria-pressed")
+    screen.getByRole("button", { name: "03 Get" }).getAttribute("aria-pressed")
   ).toBe("true")
   await user.click(screen.getByRole("button", { name: "06 Delete" }))
   expect(screen.getByRole("code").textContent).toBe("key remove services/api")
