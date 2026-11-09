@@ -65,6 +65,21 @@ Limits provide bounded headroom rather than company-site's smaller CSS budget.
 Failed browser checks retain HTML reports, screenshots, and traces for seven
 days. Successful non-PR runs retain the tested `dist/` for seven days.
 
+On 2026-11-09, [push run 42661717895](https://github.com/tvr-works/key-site/actions/runs/42661717895)
+passed on the actual Blacksmith runner for commit
+`714d6c946499e97aeb122910b182904253d6c305`: 70 unit/contract tests, 18 preview
+browser tests, four public-artifact tests, and the high/critical audit threshold.
+The job completed in 1m28s and retained the static artifact. An anonymous local
+gate probe accepted that exact SHA and branch. This establishes CI and public
+API access from the probe environment, not Cloudflare egress availability or
+hosted deployment behavior.
+
+The first run failed when the manifest queried local Git dirty state inside the
+container. Platform identity now avoids Git entirely; four subprocess cases
+exercise Cloudflare/GitHub context and local fallback with Git absent from
+`PATH`. No global ownership exception or persisted checkout credential was
+added.
+
 ## Publication gate
 
 `scripts/wait-for-ci.ts` reads `CF_PAGES_COMMIT_SHA` and `CF_PAGES_BRANCH` and
