@@ -194,3 +194,9 @@ shadcn lint enforcement or hide that debt with file-wide rule disables.
 - https://docs.github.com/en/rest/actions/workflow-runs
 - https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api
 - https://playwright.dev/docs/docker
+
+## Coordinator cutover record
+
+Main integration `1b2f51ab9d466c9b90219f46c78b6fc58689a4ea` passed [push CI](https://github.com/tvr-works/key-site/actions/runs/42662814953) before the existing Pages build command changed to `npm run ci:gate && npm run build`. A fresh API readback preserved project `facf5bd3-0cbf-4aa0-b42f-26ccb4d980c0`, organization source/repository identity, `main` production, enabled production automation, all branch previews, `dist`, root, domains and the existing indexing policy. Both production and preview now explicitly set Node `26.13.0` and npm `11.20.0`.
+
+The negative preview acceptance used commit `0e49ded88d41c803abd6625ff26a0aa619494215` on `codex/ci-publication-verification`. [CI run 42663376751](https://github.com/tvr-works/key-site/actions/runs/42663376751) failed at the intentional probe. Pages deployment `96f6a4a1-1cb4-4aae-8327-f4a206e71ff7` rejected that failed run at the gate before application build/publication; its deploy stage remained idle. Canonical production stayed `fb763869-ac21-4567-bf8d-8b3a07960a6e` at `53ae3de`. The intentional failure never entered main. Positive preview and production checks use their own exact commit identities and mode-aware hosted verification.

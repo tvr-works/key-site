@@ -118,3 +118,5 @@ Run `npm run check` for formatting, lint, types, and unit checks. Run
 indexing. `npm run test:artifact` checks the public static artifact. See
 `docs/ci-deployment.md` for CI, the pending Cloudflare gate cutover, runtime
 pins, delivery/security policies, deployment identity checks, and recovery.
+
+Production and branch previews now wait for successful CI for their exact commit before Cloudflare publication. The existing Pages project, public production content, and preview exclusion policy remain in place; see [the deployment runbook](docs/ci-deployment.md).
