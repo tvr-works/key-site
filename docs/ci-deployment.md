@@ -106,7 +106,12 @@ limit. Browser tests exercise the application with these headers active.
 ## Deployment smoke check and recovery
 
 The build records repository, commit, branch, dirty state, and runtime in
-`build-info.json`. Verification requires the exact expected identity before
+`build-info.json`. Platform builds use `CF_PAGES_COMMIT_SHA` before `GITHUB_SHA`
+and the platform branch context, recording the immutable checkout as clean
+without invoking Git. Local builds fall back to Git and inspect dirty state.
+This avoids container ownership exceptions; contract tests run with Git absent
+from `PATH` to check the platform boundary.
+Verification requires the exact expected identity before
 checking content. It checks only the supplied origin and never silently accepts
 an older healthy production alias:
 

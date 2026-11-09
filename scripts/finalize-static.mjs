@@ -29,9 +29,9 @@ for (const match of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g))
     "Unexpected inline script violates CSP"
   )
 
+const platformCommit = process.env.CF_PAGES_COMMIT_SHA || process.env.GITHUB_SHA
 const commit =
-  process.env.CF_PAGES_COMMIT_SHA ||
-  process.env.GITHUB_SHA ||
+  platformCommit ||
   execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim()
 const branch =
   process.env.CF_PAGES_BRANCH ||
@@ -40,9 +40,12 @@ const branch =
   execFileSync("git", ["branch", "--show-current"], { encoding: "utf8" }).trim()
 assert.match(commit, /^[a-f0-9]{40}$/u, "A full source commit is required")
 assert.ok(branch, "A source branch is required")
-const dirty = !!execFileSync("git", ["status", "--porcelain"], {
-  encoding: "utf8",
-}).trim()
+// Platform builds check out an immutable commit; local builds inspect the worktree.
+const dirty = platformCommit
+  ? false
+  : !!execFileSync("git", ["status", "--porcelain"], {
+      encoding: "utf8",
+    }).trim()
 const info = {
   repository: "tvr-works/key-site",
   commit,
