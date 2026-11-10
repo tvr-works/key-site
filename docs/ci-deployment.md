@@ -169,23 +169,58 @@ tooling; the high/critical threshold passes without exclusions or `--force`.
 Review the current registry audit during every CI run rather than treating this
 record as an ongoing clean bill of health.
 
-## shadcn lint assessment
+## shadcn lint enforcement
 
-The existing Oxlint 1.81 JS-plugin bridge can run `@shadcn/lint` 0.2.3, but a
-probe with all six standard rules produced 32 diagnostics against the current
-design and a class-grammar compatibility warning. The plugin needs `cn` 0.4 or
-later; Key uses `cn` 0.2.5, so the probe fell back to the plugin's own grammar.
-This is not a reliable basis for silently enforcing the app's merge semantics.
+`npm run lint` loads pinned `@shadcn/lint` 0.2.5 through Oxlint 1.81's JS-plugin
+bridge. The app pins `cn` 0.5.2, so the plugin reads the same project grammar
+used for class merging instead of falling back to its bundled grammar. Node
+26.13.0 and npm 11.20.0 remain pinned. The CLI's transitive copies of `cn` are
+tooling dependencies, not the app's class-merging engine.
 
-Concrete debt includes existing Button overrides (`rounded-none`, spacing,
-typography and `playback-toggle`/`detail-trigger` classes), custom Tabs/ScrollArea
-classes, `text-link` being treated as a color utility, unstyled marker classes
-`recover-replacement` and `chapter-reader-mobile`, and the deliberate dynamic
-progress transform. A follow-up can define narrow component contracts, resolve
-the class-name ambiguity, and validate a `cn` upgrade against the visual design.
-The probe dependency and broad trial configuration were removed. This CI change
-retains existing React/hooks/accessibility Oxlint rules; it does not claim
-shadcn lint enforcement or hide that debt with file-wide rule disables.
+All six rules run at error severity through the existing `npm run check` and
+Blacksmith workflow:
+
+- `no-restyle`, allowing layout classes at component call sites.
+- `no-raw-colors`.
+- `no-arbitrary-values`.
+- `no-inline-styles`.
+- `no-unknown-classes`.
+- `require-static-classes`.
+
+There are no rule disables, component-directory exemptions, or allowlists.
+Button variants own playback, reading, detail, command, and copy treatments,
+including their established dimensions. Chapter variants on Tabs, its parts,
+and ScrollArea own the existing chapter CSS classes. Pages supply behavior and
+layout instead of repeating appearance overrides. The existing theme and
+Base UI primitives are retained.
+
+`inline-link` replaces the ambiguous `text-link` class without changing its CSS.
+Two unused marker classes were removed after checking all source references.
+Playback writes only `--chapter-progress`; the stylesheet owns its transform.
+This uses the inline-style rule's standard custom-property support, not an
+exception. Existing primitive values use scale values or named theme tokens
+for control radii, small text, secondary hover color, tab height, and dialog
+width. The scrolling viewport uses a named transition property. Typed token references
+keep custom font sizes distinct from colors in the runtime merge grammar.
+
+A temporary acceptance probe confirmed that each of the six rules rejects its
+corresponding violation; the probe was removed. Before/after screenshots and
+computed styles cover all four chapters, reading jumps, a command selection,
+the hero, and installation at 320, 390, 768, and 1440 pixels in Chromium and
+WebKit. All 88 captures matched the published-main baseline. Hover and keyboard
+focus were also compared against the immutable published deployment at mobile
+and desktop sizes in both engines. A clean `npm ci`, 70 unit/contract tests,
+18 preview/browser cases, four public-artifact cases, build budgets, and the
+high/critical audit threshold passed locally. The audit still reports the same
+eight low/moderate tooling findings described above. Existing tests
+cover keyboard orientation, heading focus, clipboard behavior, contrast,
+responsive overflow, reduced motion, and real observer-driven playback.
+
+The plugin checks classes and JSX styles. It does not enforce token usage in
+raw CSS declarations; existing CSS and theme colors remain subject to code and
+visual review. Future changes must run `npm run lint` and fix all errors, then
+run the applicable build/browser checks when rendering or merge semantics
+change.
 
 ## References
 
