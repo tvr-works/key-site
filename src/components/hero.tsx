@@ -49,7 +49,7 @@ export function Hero() {
           Touch ID, Apple Watch, or your Mac password, and keep your encrypted
           vault in a folder you choose.
         </p>
-        <a className="text-link hero-install" href="#install">
+        <a className="inline-link hero-install" href="#install">
           Install key <ArrowDown aria-hidden="true" />
         </a>
       </div>

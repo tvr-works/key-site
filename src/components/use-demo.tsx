@@ -36,8 +36,7 @@ export function UseDemo({ onInteract }: { onInteract: () => void }) {
         {commandWalkthrough.map((item, stepIndex) => (
           <Button
             key={item.label}
-            variant="ghost"
-            className="demo-step"
+            variant="command"
             aria-pressed={index === stepIndex}
             aria-controls="command-example"
             onClick={() => {

@@ -6,20 +6,26 @@ function ScrollArea({
   className,
   children,
   viewportProps,
+  variant = "default",
   ...props
 }: ScrollAreaPrimitive.Root.Props & {
   viewportProps?: React.ComponentProps<typeof ScrollAreaPrimitive.Viewport>
+  variant?: "default" | "chapter"
 }) {
   return (
     <ScrollAreaPrimitive.Root
       data-slot="scroll-area"
-      className={cn("relative", className)}
+      className={cn(
+        "relative",
+        variant === "chapter" && "chapter-reader",
+        className
+      )}
       {...props}
     >
       <ScrollAreaPrimitive.Viewport
         {...viewportProps}
         data-slot="scroll-area-viewport"
-        className="size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1"
+        className="size-full rounded-(--radius-inherit) transition-(--control-transition) outline-none focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-1"
       >
         {children}
       </ScrollAreaPrimitive.Viewport>

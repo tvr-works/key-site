@@ -1,4 +1,5 @@
 import { Pause, Play } from "lucide-react"
+import type { CSSProperties } from "react"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { chapters } from "@/content/chapters"
@@ -31,29 +32,31 @@ export function ChapterExplorer() {
         onValueChange={(value) =>
           select(chapters.findIndex((chapter) => chapter.id === value))
         }
-        className="chapter-layout"
+        variant="chapter"
       >
         <div className="chapter-rail" ref={stageRef}>
           <TabsList
             activateOnFocus
-            variant="line"
-            className="chapter-tabs"
+            variant="chapter"
             aria-label="Feature chapters"
           >
             {chapters.map((chapter, index) => (
               <TabsTrigger
                 key={chapter.id}
                 value={chapter.id}
-                className="chapter-tab"
+                variant="chapter"
                 onClick={() => select(index)}
               >
                 <span className="chapter-tab-number">{chapter.number}</span>
                 <span>{chapter.label}</span>
                 <span className="chapter-progress" aria-hidden="true">
                   <span
-                    style={{
-                      transform: `scaleX(${index === state.index ? progress : 0})`,
-                    }}
+                    style={
+                      {
+                        "--chapter-progress":
+                          index === state.index ? progress : 0,
+                      } as CSSProperties
+                    }
                   />
                 </span>
               </TabsTrigger>
@@ -62,8 +65,7 @@ export function ChapterExplorer() {
           <div className="playback-controls">
             <Button
               data-playback-toggle=""
-              variant="ghost"
-              className="playback-toggle h-11 rounded-none p-0 text-sm font-normal text-muted-foreground hover:bg-transparent hover:text-foreground"
+              variant="playback"
               onClick={state.paused ? play : pause}
               aria-label={state.paused ? "Play chapters" : "Pause chapters"}
             >
@@ -89,7 +91,7 @@ export function ChapterExplorer() {
             <TabsContent
               key={chapter.id}
               value={chapter.id}
-              className="chapter-panel"
+              variant="chapter"
               keepMounted
             >
               <ChapterReader

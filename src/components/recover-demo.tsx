@@ -53,7 +53,7 @@ export function RecoverDemo() {
             <span>Vault files</span>
           </div>
           <ArrowRight className="recover-arrow" />
-          <div className="recover-device recover-replacement">
+          <div className="recover-device">
             <div className="recover-new-mac">
               <MacIllustration />
               <Check className="recover-approved" />

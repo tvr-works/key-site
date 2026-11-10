@@ -30,7 +30,7 @@ export function InstallSection() {
         <h2 id="install-title" className="install-title">
           Install key.
         </h2>
-        <a className="text-link mt-8" href={setupUrl}>
+        <a className="inline-link mt-8" href={setupUrl}>
           Set up your vault <ArrowUpRight aria-hidden="true" />
         </a>
       </div>
@@ -50,8 +50,7 @@ export function InstallSection() {
             </code>
           </pre>
           <Button
-            variant="ghost"
-            className="size-11 shrink-0 gap-2 rounded-none px-2 text-muted-foreground sm:w-24"
+            variant="copy"
             onClick={copyCommand}
             aria-label="Copy install commands"
           >

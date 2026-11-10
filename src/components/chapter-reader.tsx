@@ -97,12 +97,11 @@ export function ChapterReader({
           ))}
         <div className="chapter-footer">
           <Button
-            variant="ghost"
-            className="detail-trigger h-auto justify-start rounded-none p-0 text-left"
+            variant="detail"
             onClick={() => jump(true)}
             aria-controls={`details-${chapter.id}`}
           >
-            <span className="text-link">
+            <span className="inline-link">
               Go deeper <ArrowDown aria-hidden="true" />
             </span>
           </Button>
@@ -115,11 +114,7 @@ export function ChapterReader({
         aria-labelledby={`details-heading-${chapter.id}`}
       >
         <div className="reading-toolbar">
-          <Button
-            variant="ghost"
-            className="reading-back h-11 rounded-none p-0 text-sm font-normal"
-            onClick={() => jump(false)}
-          >
+          <Button variant="reading" onClick={() => jump(false)}>
             <ArrowUp aria-hidden="true" /> Back to overview
           </Button>
           <span className="eyebrow text-muted-foreground">
@@ -141,10 +136,10 @@ export function ChapterReader({
     </>
   )
 
-  if (compact) return <div className="chapter-reader-mobile">{content}</div>
+  if (compact) return <div>{content}</div>
   return (
     <ScrollArea
-      className="chapter-reader"
+      variant="chapter"
       viewportProps={{
         ref: viewport,
         "aria-label": `${chapter.label} overview and explanation`,
