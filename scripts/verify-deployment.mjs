@@ -154,6 +154,14 @@ export async function verifyDeployment({
     "Prerendered privacy notice"
   )
 
+  assert.equal(
+    privacy
+      .querySelector('main a[href="mailto:support@tvr.works"]')
+      ?.textContent.trim(),
+    "support@tvr.works",
+    "Privacy support address is readable in static HTML"
+  )
+
   const image = await get("/assets/og-card.jpg")
   assert.equal(image.status, 200, "Social image response")
   assert.match(image.headers.get("content-type") || "", /image\/jpeg/u)

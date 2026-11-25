@@ -17,7 +17,7 @@ const html = `<html><head>
 <meta name="twitter:image" content="https://key.tvr.works/assets/og-card.jpg">
 <link href="https://key.tvr.works/" rel="canonical"></head><body>
 ${["use", "authenticate", "sync", "recover"].map((id) => `<article id="details-${id}">Content</article>`).join("")}<footer><a href="/privacy">Privacy</a></footer></body></html>`
-const privacyHtml = `<html><head><title>Key privacy</title><link href="https://key.tvr.works/privacy" rel="canonical"></head><body><main><h1>Key privacy</h1></main></body></html>`
+const privacyHtml = `<html><head><title>Key privacy</title><link href="https://key.tvr.works/privacy" rel="canonical"></head><body><main><h1>Key privacy</h1><a href="mailto:support@tvr.works">support@tvr.works</a></main></body></html>`
 const headers = {
   "content-type": "text/html",
   "x-robots-tag": "noindex",
@@ -132,6 +132,17 @@ describe("deployment verification", () => {
     responses({ privacy: privacyHtml.replace("<h1>Key privacy</h1>", "") })
     await expect(verifyDeployment(options)).rejects.toThrow(
       "Prerendered privacy notice"
+    )
+  })
+  it("rejects a privacy support address masked by the edge", async () => {
+    responses({
+      privacy: privacyHtml.replace(
+        '<a href="mailto:support@tvr.works">support@tvr.works</a>',
+        '<a href="/cdn-cgi/l/email-protection">[email protected]</a>'
+      ),
+    })
+    await expect(verifyDeployment(options)).rejects.toThrow(
+      "Privacy support address is readable in static HTML"
     )
   })
   it.each([

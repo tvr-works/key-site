@@ -1,6 +1,10 @@
 import { SiteFooter } from "@/components/site-footer"
 import { projectUrl } from "@/content/chapters"
 
+// Keep the public address readable on Cloudflare without JavaScript.
+const supportEmailHtml =
+  '<!--email_off--><a href="mailto:support@tvr.works">support@tvr.works</a><!--/email_off-->'
+
 export function PrivacyPage() {
   return (
     <>
@@ -85,7 +89,7 @@ export function PrivacyPage() {
             <p>
               For privacy questions, or to ask about or request deletion of
               information you sent us, email{" "}
-              <a href="mailto:support@tvr.works">support@tvr.works</a>.
+              <span dangerouslySetInnerHTML={{ __html: supportEmailHtml }} />.
             </p>
           </section>
         </article>
