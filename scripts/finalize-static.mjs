@@ -15,19 +15,25 @@ for (const id of ["use", "authenticate", "sync", "recover"])
     html.includes(`id="details-${id}"`),
     `Missing prerendered ${id} article`
   )
-assert.ok(
-  !html.includes('<div id="root"></div>'),
-  "Unrendered application shell"
-)
-assert.ok(
-  html.includes('href="https://key.tvr.works/"'),
-  "Missing production canonical"
-)
-for (const match of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g))
+const privacy = await readFile(new URL("privacy.html", directory), "utf8")
+for (const [path, page] of [
+  ["/", html],
+  ["/privacy", privacy],
+]) {
   assert.ok(
-    /\bsrc=/.test(match[1]) || !match[2].trim(),
-    "Unexpected inline script violates CSP"
+    !page.includes('<div id="root"></div>'),
+    `Unrendered application shell on ${path}`
   )
+  assert.ok(
+    page.includes(`<link rel="canonical" href="https://key.tvr.works${path}"`),
+    `Missing production canonical on ${path}`
+  )
+  for (const match of page.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g))
+    assert.ok(
+      /\bsrc=/.test(match[1]) || !match[2].trim(),
+      `Unexpected inline script violates CSP on ${path}`
+    )
+}
 
 const platformCommit = process.env.CF_PAGES_COMMIT_SHA || process.env.GITHUB_SHA
 const commit =

@@ -1265,6 +1265,31 @@ a.inline-link[href^="#"]:hover svg {
   font-size: 15px;
   line-height: 1.8;
 }
+.site-footer {
+  color: var(--muted-foreground);
+  font-size: clamp(0.8125rem, 1.1vw, 0.9375rem);
+}
+.site-footer-row,
+.site-footer-links {
+  display: flex;
+  align-items: center;
+  gap: 0 8px;
+}
+.site-footer-row {
+  flex-wrap: wrap;
+  border-top: 1px solid var(--border);
+  padding-block: 16px clamp(28px, 4vw, 56px);
+}
+.site-footer-links a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  text-underline-offset: 0.25em;
+}
+.site-footer-links a:hover {
+  color: var(--foreground);
+  text-decoration: underline;
+}
 @media (min-width: 1800px) {
   .page-gutter {
     padding-inline: max(88px, calc((100vw - 1624px) / 2));

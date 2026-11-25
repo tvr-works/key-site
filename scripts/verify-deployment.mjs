@@ -71,29 +71,36 @@ export async function verifyDeployment({
   )
   assert.equal(info.dirty, false, "Deployment must use committed source")
 
-  const response = await get("/")
-  assert.equal(response.status, 200, "Homepage response")
-  assert.match(response.headers.get("content-type") || "", /text\/html/u)
-  const html = await response.text()
-  const document = new JSDOM(html).window.document
-  assert.equal(
-    document.querySelector('link[rel="canonical"]')?.getAttribute("href"),
-    `${publicOrigin}/`,
-    "Canonical URL"
-  )
-  assert.ok(
-    !/noindex/iu.test(
-      document.querySelector('meta[name="robots"]')?.getAttribute("content") ||
-        ""
-    ),
-    "Public HTML indexing is preserved"
-  )
-  assert.equal(
-    /\bnoindex\b/iu.test(response.headers.get("x-robots-tag") || ""),
+  const edgeNoindex =
     mode === "preview" ||
-      /^[a-f0-9]{8}\.key-site\.pages\.dev$/u.test(origin.hostname),
-    "Cloudflare edge indexing policy"
-  )
+    /^[a-f0-9]{8}\.key-site\.pages\.dev$/u.test(origin.hostname)
+  async function getPublicPage(path) {
+    const response = await get(path)
+    assert.equal(response.status, 200, `Public page response for ${path}`)
+    assert.match(response.headers.get("content-type") || "", /text\/html/u)
+    const document = new JSDOM(await response.text()).window.document
+    assert.equal(
+      document.querySelector('link[rel="canonical"]')?.getAttribute("href"),
+      `${publicOrigin}${path}`,
+      `Canonical URL for ${path}`
+    )
+    assert.ok(
+      !/noindex/iu.test(
+        document
+          .querySelector('meta[name="robots"]')
+          ?.getAttribute("content") || ""
+      ),
+      `Public HTML indexing is preserved for ${path}`
+    )
+    assert.equal(
+      /\bnoindex\b/iu.test(response.headers.get("x-robots-tag") || ""),
+      edgeNoindex,
+      `Cloudflare edge indexing policy for ${path}`
+    )
+    return { response, document }
+  }
+
+  const { response, document } = await getPublicPage("/")
   for (const id of ["use", "authenticate", "sync", "recover"])
     assert.ok(
       document.getElementById(`details-${id}`)?.textContent.trim(),
@@ -134,6 +141,18 @@ export async function verifyDeployment({
     response.headers.get("permissions-policy"),
     "camera=(), microphone=(), geolocation=()"
   )
+  assert.equal(
+    document.querySelector('footer a[href="/privacy"]')?.textContent.trim(),
+    "Privacy",
+    "Homepage footer links to the local privacy notice"
+  )
+  const { document: privacy } = await getPublicPage("/privacy")
+  assert.equal(privacy.title, "Key privacy", "Privacy page title")
+  assert.equal(
+    privacy.querySelector("main h1")?.textContent.trim(),
+    "Key privacy",
+    "Prerendered privacy notice"
+  )
 
   const image = await get("/assets/og-card.jpg")
   assert.equal(image.status, 200, "Social image response")
@@ -157,7 +176,7 @@ export async function verifyDeployment({
   }).window.document
   assert.deepEqual(
     [...xml.querySelectorAll("loc")].map((element) => element.textContent),
-    [`${publicOrigin}/`]
+    [`${publicOrigin}/`, `${publicOrigin}/privacy`]
   )
   const missing = await get("/missing-deployment-check")
   assert.equal(missing.status, 404, "A missing page returns a real 404")

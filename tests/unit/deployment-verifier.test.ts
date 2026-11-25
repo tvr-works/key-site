@@ -16,7 +16,8 @@ const html = `<html><head>
 <meta content="https://key.tvr.works/assets/og-card.jpg" property="og:image">
 <meta name="twitter:image" content="https://key.tvr.works/assets/og-card.jpg">
 <link href="https://key.tvr.works/" rel="canonical"></head><body>
-${["use", "authenticate", "sync", "recover"].map((id) => `<article id="details-${id}">Content</article>`).join("")}</body></html>`
+${["use", "authenticate", "sync", "recover"].map((id) => `<article id="details-${id}">Content</article>`).join("")}<footer><a href="/privacy">Privacy</a></footer></body></html>`
+const privacyHtml = `<html><head><title>Key privacy</title><link href="https://key.tvr.works/privacy" rel="canonical"></head><body><main><h1>Key privacy</h1></main></body></html>`
 const headers = {
   "content-type": "text/html",
   "x-robots-tag": "noindex",
@@ -30,6 +31,7 @@ const headers = {
 function responses({
   info = {},
   homepage = html,
+  privacy = privacyHtml,
   publicBuild = false,
   origin = options.url,
 } = {}) {
@@ -44,10 +46,12 @@ function responses({
         dirty: false,
         ...info,
       })
-    if (url.pathname === "/") {
+    if (url.pathname === "/" || url.pathname === "/privacy") {
       const policy = new Headers(headers)
       if (publicBuild) policy.delete("x-robots-tag")
-      return new Response(homepage, { headers: policy })
+      return new Response(url.pathname === "/" ? homepage : privacy, {
+        headers: policy,
+      })
     }
     if (url.pathname === "/assets/og-card.jpg")
       return new Response(new Uint8Array(image), {
@@ -59,7 +63,7 @@ function responses({
       )
     if (url.pathname === "/sitemap.xml")
       return new Response(
-        '<?xml version="1.0"?><urlset><url><loc>https://key.tvr.works/</loc></url></urlset>'
+        '<?xml version="1.0"?><urlset><url><loc>https://key.tvr.works/</loc></url><url><loc>https://key.tvr.works/privacy</loc></url></urlset>'
       )
     return new Response(
       '<main><a href="/">Home</a></main><meta name="robots" content="noindex">',
@@ -75,7 +79,7 @@ describe("deployment verification", () => {
   it("checks the supplied preview and preserves edge-only noindex", async () => {
     const request = responses()
     await expect(verifyDeployment(options)).resolves.toBeUndefined()
-    expect(request).toHaveBeenCalledTimes(6)
+    expect(request).toHaveBeenCalledTimes(7)
   })
   it("rejects a stale commit before inspecting other content", async () => {
     const request = responses({ info: { commit: "b".repeat(40) } })
@@ -123,6 +127,12 @@ describe("deployment verification", () => {
   it("rejects an unrelated matching link in place of the canonical", async () => {
     responses({ homepage: html.replace('rel="canonical"', 'rel="alternate"') })
     await expect(verifyDeployment(options)).rejects.toThrow("Canonical URL")
+  })
+  it("rejects an unrendered privacy notice even with the correct metadata", async () => {
+    responses({ privacy: privacyHtml.replace("<h1>Key privacy</h1>", "") })
+    await expect(verifyDeployment(options)).rejects.toThrow(
+      "Prerendered privacy notice"
+    )
   })
   it.each([
     { expectedCommit: "short" },

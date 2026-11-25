@@ -1,6 +1,7 @@
 {
   "javascript": { "maxRawKiB": 350, "maxGzipKiB": 120 },
   "css": { "maxRawKiB": 64, "maxGzipKiB": 16 },
+  "privacyCss": { "maxRawKiB": 20, "maxGzipKiB": 3 },
   "fonts": { "maxRawKiB": 36 },
   "images": { "maxRawKiB": 512, "maxFileKiB": 192 },
   "html": { "maxRawKiB": 64 }
