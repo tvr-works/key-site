@@ -59,9 +59,9 @@ playback with normal motion. It uses desktop Chromium and narrow WebKit.
 It is not a complete physical-device or assistive-technology certification.
 
 Both browser commands build first and enforce `build-budgets.json`. Budgets are
-calibrated to Key's existing assets: approximately 294 KiB JS, 56 KiB CSS,
-29 KiB font data, and 432 KiB images, including the existing large touch icon.
-Limits provide bounded headroom rather than company-site's smaller CSS budget.
+calibrated to Key's existing assets, including the large touch icon. The shared
+CSS retains its 64 KiB raw and 16 KiB gzip limits. Styles linked exclusively by
+the privacy notice have a separate 20 KiB raw and 3 KiB gzip budget for Typeset.
 Failed browser checks retain HTML reports, screenshots, and traces for seven
 days. Successful non-PR runs retain the tested `dist/` for seven days.
 
@@ -187,7 +187,8 @@ Blacksmith workflow:
 - `no-unknown-classes`.
 - `require-static-classes`.
 
-There are no rule disables, component-directory exemptions, or allowlists.
+All six rules remain enabled. The privacy page lists the classes supplied by
+its route stylesheet, which is outside Tailwind's shared import graph.
 Button variants own playback, reading, detail, command, and copy treatments,
 including their established dimensions. Chapter variants on Tabs, its parts,
 and ScrollArea own the existing chapter CSS classes. Pages supply behavior and

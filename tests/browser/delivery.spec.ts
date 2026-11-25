@@ -57,6 +57,7 @@ test(
     expect(sitemap.status()).toBe(200)
     expect((await sitemap.text()).match(/<loc>.*?<\/loc>/g)).toEqual([
       "<loc>https://key.tvr.works/</loc>",
+      "<loc>https://key.tvr.works/privacy</loc>",
     ])
     const manifest = await request.get("/build-info.json")
     expect(manifest.status()).toBe(200)
@@ -75,6 +76,55 @@ test(
 
 test.describe("without application JavaScript", () => {
   test.use({ javaScriptEnabled: false })
+  test(
+    "opens the prerendered privacy notice from the footer and on direct navigation",
+    { tag: "@artifact" },
+    async ({ page }) => {
+      await page.goto("/")
+      const footer = page.getByRole("contentinfo")
+      await expect(
+        footer.getByRole("link", { name: "Software" })
+      ).toHaveAttribute("href", "https://tvr.works/software")
+      await footer.getByRole("link", { name: "Privacy" }).click()
+      await expect(page).toHaveURL(/\/privacy$/)
+      await expect(
+        page.getByRole("heading", { name: "Key privacy" })
+      ).toBeVisible()
+      await expect(
+        footer.getByRole("link", { name: "Privacy" })
+      ).toHaveAttribute("aria-current", "page")
+
+      const response = await page.goto("/privacy")
+      expect(response?.status()).toBe(200)
+      expect(response?.headers()["x-robots-tag"]).toBe(
+        production ? undefined : "noindex"
+      )
+      expect(response?.headers()["content-security-policy"]).toContain(
+        "script-src 'self'"
+      )
+      await expect(page).toHaveTitle("Key privacy")
+      await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+        "href",
+        "https://key.tvr.works/privacy"
+      )
+      await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+        "content",
+        /vault storage and sync/
+      )
+      await expect(
+        page.getByRole("article").getByRole("heading", { level: 2 })
+      ).toHaveText([
+        "Website visits",
+        "Vault storage and sync",
+        "Support and privacy questions",
+      ])
+      await expect(
+        page.getByRole("link", { name: "support@tvr.works" })
+      ).toHaveAttribute("href", "mailto:support@tvr.works")
+      await page.getByRole("link", { name: "Key home" }).click()
+      await expect(page).toHaveURL(/\/$/)
+    }
+  )
   test(
     "serves meaningful HTML and a real static 404 with a working home link",
     { tag: "@artifact" },

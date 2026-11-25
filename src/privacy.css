@@ -1,0 +1,50 @@
+@import "./typeset.css";
+
+.privacy-header {
+  display: flex;
+  align-items: center;
+  min-height: 88px;
+}
+.privacy-article {
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-ring: var(--ring);
+  --typeset-font-heading: var(--font-sans);
+  --typeset-size: calc(1rem / 1.125);
+  --typeset-leading: 1.65;
+  --typeset-flow: 1em;
+  max-width: 680px;
+  margin-inline: auto;
+  padding-block: clamp(24px, 5vw, 64px) clamp(56px, 7vw, 96px);
+  color: var(--muted-foreground);
+
+  @media (min-width: 48rem), print {
+    --typeset-size: 1.125rem;
+  }
+}
+.privacy-article h1 {
+  color: var(--foreground);
+  font-size: clamp(2.75rem, 6vw, 4rem);
+  font-weight: 690;
+  letter-spacing: -0.055em;
+  line-height: 1.04;
+}
+.privacy-date {
+  margin-top: 12px;
+  font-size: 0.875rem;
+}
+.privacy-intro {
+  margin-top: 24px;
+  color: var(--foreground);
+}
+.privacy-article h2 {
+  font-size: clamp(1.375rem, 2.1vw, 1.625rem);
+  letter-spacing: -0.025em;
+}
+.privacy-article :is(a, code) {
+  color: var(--foreground);
+}
+.privacy-article a {
+  text-decoration-color: currentColor;
+  text-underline-offset: 0.2em;
+}

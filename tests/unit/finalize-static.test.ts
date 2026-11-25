@@ -38,6 +38,10 @@ function finalize(context: Record<string, string | undefined>) {
         .map((id) => `<article id="details-${id}">Content</article>`)
         .join("")
   )
+  writeFileSync(
+    join(directory, "dist/privacy.html"),
+    '<link rel="canonical" href="https://key.tvr.works/privacy"><main>Key privacy</main>'
+  )
   const env = { ...process.env }
   for (const key of [
     "CF_PAGES_COMMIT_SHA",

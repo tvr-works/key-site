@@ -15,6 +15,25 @@
     "shadcn/no-unknown-classes": "error",
     "shadcn/require-static-classes": "error"
   },
+  "overrides": [
+    {
+      "files": ["src/components/privacy-page.tsx"],
+      "rules": {
+        "shadcn/no-unknown-classes": [
+          "error",
+          {
+            "allow": [
+              "privacy-header",
+              "privacy-article",
+              "privacy-date",
+              "privacy-intro",
+              "typeset"
+            ]
+          }
+        ]
+      }
+    }
+  ],
   "ignorePatterns": [
     "dist",
     ".cache",
